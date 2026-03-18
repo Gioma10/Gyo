@@ -1,6 +1,9 @@
 import Fastify from 'fastify'
 import cors from '@fastify/cors'
 import dotenv from 'dotenv'
+import { clerkPlugin } from '@clerk/fastify'
+import { subscriptionsRoutes } from './routes/subscriptions.js'
+import fp from 'fastify-plugin'
 
 dotenv.config()
 
@@ -14,11 +17,18 @@ const start = async () => {
     credentials: true,
   })
 
-  app.get('/health', async () => {
-    return { status: 'ok' }
-  })
+  const publishableKey = process.env.CLERK_PUBLISHABLE_KEY
+  const secretKey = process.env.CLERK_SECRET_KEY
 
-  await app.listen({ port: Number(process.env.PORT) || 3001 })
+  if (!publishableKey || !secretKey) {
+    throw new Error('CLERK_PUBLISHABLE_KEY and CLERK_SECRET_KEY must be set')
+  }
+
+  await app.register(fp(clerkPlugin), { publishableKey, secretKey })
+
+  await app.register(subscriptionsRoutes, { prefix: '/api/subscriptions' })
+
+  await app.listen({ port: Number(process.env.PORT) || 8080 })
 }
 
 start()
