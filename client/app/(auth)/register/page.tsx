@@ -12,7 +12,7 @@ import { useClerk, useSignUp } from "@clerk/nextjs";
 import { useMemo, useState } from "react";
 import { match } from "ts-pattern";
 import { zxcvbn } from "@zxcvbn-ts/core";
-import { SecurityPasswordBar } from "@/components/securityPasswordBar";
+import { BarScorePassword } from "@/components/auth/BarScorePassword";
 
 const registerSchema = z
   .object({
@@ -47,8 +47,6 @@ export default function RegisterPage() {
     const score = zxcvbn(password).score;
     return score;
   }, [password]);
-
-  console.log(passScore);
 
   const { signUp } = useSignUp();
   const { signOut } = useClerk();
@@ -93,11 +91,10 @@ export default function RegisterPage() {
   });
 
   const onSubmit = (data: RegisterForm) => {
-    console.log(data);
     if (passScore < 3) {
-        setError("La password deve essere almeno 'Buona'")
-        return
-      }
+      setError("La password deve essere almeno 'Buona'");
+      return;
+    }
     onRegister.mutate(data);
   };
 
@@ -191,7 +188,7 @@ export default function RegisterPage() {
             </Button>
             {error && <div className="text-red-400">{error}</div>}
 
-            {password && <SecurityPasswordBar score={passScore} error={error} />}
+            {password && <BarScorePassword score={passScore} error={error} />}
           </form>
 
           <p className="text-sm text-center text-muted-foreground mt-4">
