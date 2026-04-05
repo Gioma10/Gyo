@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { useMutation } from "@tanstack/react-query";
-import { useClerk, useSignUp } from "@clerk/nextjs";
+import { useSignUp } from "@clerk/nextjs";
 import { useMemo, useState } from "react";
 import { match } from "ts-pattern";
 import { zxcvbn } from "@zxcvbn-ts/core";
@@ -50,7 +50,6 @@ export default function RegisterPage() {
   }, [password]);
 
   const { signUp } = useSignUp();
-  const { signOut } = useClerk();
 
   //   Login mutation
   const onRegister = useMutation({
@@ -76,19 +75,36 @@ export default function RegisterPage() {
     onError: (error: any) => {
       const code = error.errors?.[0]?.code;
       const message = match(code)
-        .with("form_password_pwned", () => "Password trovata in un data breach, usane una più sicura")
-        .with("form_identifier_exists", () => "Username già in uso, scegline un altro")
+        .with(
+          "form_password_pwned",
+          () => "Password trovata in un data breach, usane una più sicura",
+        )
+        .with(
+          "form_identifier_exists",
+          () => "Username già in uso, scegline un altro",
+        )
         .with("form_email_address_exists", () => "Email già in uso")
         .with("form_identifier_not_found", () => "Email non trovata")
         .with("session_exists", () => "Sei già loggato")
-        .with("too_many_requests", () => "Troppi tentativi, riprova tra qualche minuto")
-        .with("form_password_size_in_bytes_exceeded", () => "Password troppo lunga")
-        .with("form_username_invalid_character", () => "Il nickname contiene caratteri non validi")
+        .with(
+          "too_many_requests",
+          () => "Troppi tentativi, riprova tra qualche minuto",
+        )
+        .with(
+          "form_password_size_in_bytes_exceeded",
+          () => "Password troppo lunga",
+        )
+        .with(
+          "form_username_invalid_character",
+          () => "Il nickname contiene caratteri non validi",
+        )
         .with("form_username_too_short", () => "Il nickname è troppo corto")
         .with("form_username_too_long", () => "Il nickname è troppo lungo")
         .with("form_param_nil", () => "Compila tutti i campi")
         .with("form_param_format_invalid", () => "Formato non valido")
-        .otherwise(() => error.errors?.[0]?.message ?? "Qualcosa è andato storto");
+        .otherwise(
+          () => error.errors?.[0]?.message ?? "Qualcosa è andato storto",
+        );
 
       setError(message);
     },
@@ -203,7 +219,6 @@ export default function RegisterPage() {
           </p>
         </div>
       </div>
-      <button onClick={() => signOut()}>Logout</button>
     </>
   );
 }
