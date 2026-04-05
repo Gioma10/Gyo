@@ -13,6 +13,7 @@ import { useMemo, useState } from "react";
 import { match } from "ts-pattern";
 import { zxcvbn } from "@zxcvbn-ts/core";
 import { BarScorePassword } from "@/components/auth/BarScorePassword";
+import { useRouter } from "next/navigation";
 
 const registerSchema = z
   .object({
@@ -39,7 +40,7 @@ export default function RegisterPage() {
   });
 
   const [error, setError] = useState<string | null>(null);
-
+  const router = useRouter();
   const password = watch("password");
 
   const passScore = useMemo(() => {
@@ -70,21 +71,24 @@ export default function RegisterPage() {
     },
     onSuccess: (status) => {
       console.log(status);
+      router.push("/");
     },
     onError: (error: any) => {
       const code = error.errors?.[0]?.code;
       const message = match(code)
-        .with(
-          "form_password_pwned",
-          () => "Password trovata in un data breach, usane una più sicura",
-        )
-        .with(
-          "form_identifier_exists",
-          () => "Username già utilizzato, scegline un altro",
-        )
+        .with("form_password_pwned", () => "Password trovata in un data breach, usane una più sicura")
+        .with("form_identifier_exists", () => "Username già in uso, scegline un altro")
+        .with("form_email_address_exists", () => "Email già in uso")
         .with("form_identifier_not_found", () => "Email non trovata")
         .with("session_exists", () => "Sei già loggato")
-        .otherwise(() => "Qualcosa è andato storto");
+        .with("too_many_requests", () => "Troppi tentativi, riprova tra qualche minuto")
+        .with("form_password_size_in_bytes_exceeded", () => "Password troppo lunga")
+        .with("form_username_invalid_character", () => "Il nickname contiene caratteri non validi")
+        .with("form_username_too_short", () => "Il nickname è troppo corto")
+        .with("form_username_too_long", () => "Il nickname è troppo lungo")
+        .with("form_param_nil", () => "Compila tutti i campi")
+        .with("form_param_format_invalid", () => "Formato non valido")
+        .otherwise(() => error.errors?.[0]?.message ?? "Qualcosa è andato storto");
 
       setError(message);
     },
@@ -186,7 +190,7 @@ export default function RegisterPage() {
             >
               Crea account
             </Button>
-            {error && <div className="text-red-400">{error}</div>}
+            {error && <FieldError>{error}</FieldError>}
 
             {password && <BarScorePassword score={passScore} error={error} />}
           </form>

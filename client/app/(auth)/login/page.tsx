@@ -9,6 +9,9 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { useSignIn } from "@clerk/nextjs";
 import { useMutation } from "@tanstack/react-query";
+import { useState } from "react";
+import { match } from "ts-pattern";
+import { useRouter } from "next/navigation";
 
 const loginSchema = z.object({
   email: z.string().email("Email non valida"),
@@ -22,25 +25,51 @@ export default function LoginPage() {
     resolver: zodResolver(loginSchema),
   });
   const { signIn } = useSignIn();
+  const [clerkError, setClerkError] = useState<string | null>(null);
+  const router = useRouter();
 
   const onLogin = useMutation({
     mutationFn: async (data: LoginForm) => {
       if (!signIn) throw new Error("Non pronto");
-      const emailAddress = data.email;
-      const password = data.password;
-      await signIn.password({ emailAddress, password });
-      return signIn.status;
+    
+      const { error } = await signIn.password({
+        emailAddress: data.email,
+        password: data.password,
+      });
+    
+      if (error) throw error;
+    
+      if (signIn.status === "complete") {
+        await signIn.finalize({
+          navigate: ({ decorateUrl }) => {
+            const url = decorateUrl("/");
+            router.push(url);
+          },
+        });
+      } else {
+        throw new Error(`Stato inatteso: ${signIn.status}`);
+      }
     },
     onSuccess: (status) => {
       console.log(status);
+      router.push("/");
     },
-    onError: (error) => {
-      console.log(error);
+    onError: (error: any) => {
+      const code = error.errors?.[0]?.code;
+      const message = match(code)
+        .with("form_password_incorrect", () => "Password errata")
+        .with("form_identifier_not_found", () => "Nessun account trovato con questa email")
+        .with("session_exists", () => "Sei già loggato")
+        .with("too_many_requests", () => "Troppi tentativi, riprova tra qualche minuto")
+        .with("form_param_format_invalid", () => "Formato email non valido")
+        .with("form_identifier_exists", () => "Account già esistente")
+        .otherwise(() => error.errors?.[0]?.message ?? "Qualcosa è andato storto");
+      setClerkError(message);
     },
   });
 
   const onSubmit = (data: LoginForm) => {
-    console.log(data);
+    setClerkError(null);
     onLogin.mutate(data);
   };
 
@@ -90,6 +119,7 @@ export default function LoginPage() {
           <Button type="submit" className="w-full bg-primary hover:bg-primary-hover text-primary-foreground">
             Accedi
           </Button>
+          {clerkError && <FieldError>{clerkError}</FieldError>}
         </form>
 
         <p className="text-sm text-center text-muted-foreground mt-4">

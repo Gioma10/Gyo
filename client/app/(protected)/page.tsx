@@ -4,6 +4,7 @@ import { useUser } from "@clerk/nextjs"
 import { Bell, LayoutGrid, ArrowLeftRight, Clock, User, AlertCircle } from "lucide-react"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
+import Link from "next/link"
 
 const mockSubscriptions = [
   { id: 1, name: "Netflix", amount: 17.99, renewDate: "20 marzo", daysLeft: 2, color: "#1a0505", iconColor: "#E24B4A" },
@@ -24,7 +25,7 @@ const navItems = [
   { label: "Dashboard", active: true, icon: <LayoutGrid size={18} /> },
   { label: "Transazioni", active: false, icon: <ArrowLeftRight size={18} /> },
   { label: "Abbonamenti", active: false, icon: <Clock size={18} /> },
-  { label: "Profilo", active: false, icon: <User size={18} /> },
+  { label: "Profilo", active: false, icon: <User size={18} />, href: "/account" },
 ]
 
 export default function DashboardPage() {
@@ -158,10 +159,12 @@ export default function DashboardPage() {
 
       {/* Bottom nav mobile */}
       <nav className="md:hidden fixed bottom-0 left-0 right-0 flex justify-around py-3 border-t border-border bg-background">
-        {navItems.map(({ label, active, icon }) => (
-          <Button key={label} variant="ghost" className="flex flex-col items-center gap-1 h-auto py-1 px-3">
+        {navItems.map(({ label, active, icon, href }) => (
+          <Button asChild key={label} variant="ghost" className="flex flex-col items-center gap-1 h-auto py-1 px-3">
+            <Link href={href ?? "/"}>
             <span style={{ color: active ? "#1D9E75" : "#555" }}>{icon}</span>
             <span className="text-xs" style={{ color: active ? "#1D9E75" : "#555" }}>{label.toLowerCase()}</span>
+            </Link>
           </Button>
         ))}
       </nav>

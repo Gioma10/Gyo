@@ -1,3 +1,5 @@
+"use client"
+
 import { useAuth } from "@clerk/nextjs";
 import { Loader2 } from "lucide-react";
 import { redirect } from "next/navigation";
