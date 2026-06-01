@@ -16,7 +16,7 @@ export type Recurrence = z.infer<typeof recurrenceSchema>;
 
 export const subscriptionSchema = z.object({
   name: z.string().min(1, "Nome obbligatorio"),
-  amount: z.coerce.number().positive("Importo non valido"),
+  amount: z.string().min(1, "Importo obbligatorio"),
   startDate: z.string().min(1, "Data obbligatoria"),
   recurrence: recurrenceSchema,
 });
