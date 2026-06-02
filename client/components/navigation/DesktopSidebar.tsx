@@ -7,9 +7,9 @@ import { usePathname } from "next/navigation";
 
 const navItems = [
   { label: "Dashboard", icon: LayoutGrid, href: "/" },
-  { label: "Transazioni", icon: ArrowLeftRight, href: "/transactions" },
-  { label: "Abbonamenti", icon: Clock, href: "/subscriptions" },
-  { label: "Profilo", icon: User, href: "/account" },
+  { label: "Transactions", icon: ArrowLeftRight, href: "/transactions" },
+  { label: "Subscriptions", icon: Clock, href: "/subscriptions" },
+  { label: "Profile", icon: User, href: "/account" },
 ];
 
 export function DesktopSidebar() {

@@ -19,7 +19,7 @@ export default function SubscriptionsPage() {
     queryKey: ["subscriptions"],
     queryFn: async () => {
       const res = await fetch("/api/subscriptions");
-      if (!res.ok) throw new Error("Errore nel caricamento");
+      if (!res.ok) throw new Error("Loading error");
       return res.json();
     },
   });
@@ -27,7 +27,7 @@ export default function SubscriptionsPage() {
   const deleteMutation = useMutation({
     mutationFn: async (id: string) => {
       const res = await fetch(`/api/subscriptions/${id}`, { method: "DELETE" });
-      if (!res.ok) throw new Error("Errore eliminazione");
+      if (!res.ok) throw new Error("Deletion error");
     },
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ["subscriptions"] }),
   });
@@ -42,9 +42,9 @@ export default function SubscriptionsPage() {
     <>
       <div className="flex justify-between items-start mb-6">
         <div>
-          <h1 className="text-xl font-medium text-foreground">Abbonamenti</h1>
+          <h1 className="text-xl font-medium text-foreground">Subscriptions</h1>
           <p className="text-sm text-muted-foreground mt-0.5">
-            {subs.length} attivi · €{monthly.toFixed(2)}/mese
+            {subs.length} active · €{monthly.toFixed(2)}/month
           </p>
         </div>
         <Button
@@ -54,7 +54,7 @@ export default function SubscriptionsPage() {
           style={{ backgroundColor: "#1D9E75", color: "#fff" }}
         >
           <Plus size={14} />
-          Aggiungi
+          Add
         </Button>
       </div>
 
@@ -62,13 +62,13 @@ export default function SubscriptionsPage() {
         <CardContent className="p-4 flex justify-between items-center">
           <div>
             <p className="text-xs mb-0.5" style={{ color: "rgba(255,255,255,0.7)" }}>
-              Spesa mensile stimata
+              Estimated monthly spending
             </p>
             <p className="text-2xl font-medium text-white">€{monthly.toFixed(2)}</p>
           </div>
           <div className="text-right">
             <p className="text-xs mb-0.5" style={{ color: "rgba(255,255,255,0.7)" }}>
-              Spesa annuale stimata
+              Estimated annual spending
             </p>
             <p className="text-base font-medium text-white">€{(monthly * 12).toFixed(2)}</p>
           </div>
@@ -105,13 +105,13 @@ export default function SubscriptionsPage() {
 
       {!isLoading && subs.length === 0 && (
         <div className="flex flex-col items-center justify-center py-20 text-center">
-          <p className="text-muted-foreground text-sm mb-3">Nessun abbonamento ancora</p>
+          <p className="text-muted-foreground text-sm mb-3">No subscriptions yet</p>
           <Button
             onClick={openAdd}
             size="sm"
             style={{ backgroundColor: "#1D9E75", color: "#fff" }}
           >
-            Aggiungi il primo
+            Add your first
           </Button>
         </div>
       )}

@@ -12,7 +12,7 @@ const mockSubscriptions = [
     id: 1,
     name: "Netflix",
     amount: 17.99,
-    renewDate: "20 marzo",
+    renewDate: "March 20",
     daysLeft: 2,
     color: "#1a0505",
     iconColor: "#E24B4A",
@@ -21,7 +21,7 @@ const mockSubscriptions = [
     id: 2,
     name: "Spotify",
     amount: 10.99,
-    renewDate: "22 marzo",
+    renewDate: "March 22",
     daysLeft: 4,
     color: "#041a10",
     iconColor: "#1D9E75",
@@ -30,7 +30,7 @@ const mockSubscriptions = [
     id: 3,
     name: "ChatGPT Plus",
     amount: 20.0,
-    renewDate: "5 aprile",
+    renewDate: "April 5",
     daysLeft: 18,
     color: "#0a1220",
     iconColor: "#378ADD",
@@ -38,10 +38,10 @@ const mockSubscriptions = [
 ];
 
 const mockMonths = [
-  { label: "ott", height: 55 },
+  { label: "oct", height: 55 },
   { label: "nov", height: 60 },
-  { label: "dic", height: 50 },
-  { label: "gen", height: 65 },
+  { label: "dec", height: 50 },
+  { label: "jan", height: 65 },
   { label: "feb", height: 55 },
   { label: "mar", height: 80, active: true },
 ];
@@ -54,7 +54,7 @@ export default function DashboardPage() {
       {/* Header */}
       <div className="flex justify-between items-start mb-6">
         <div>
-          <p className="text-sm text-muted-foreground">Buongiorno,</p>
+          <p className="text-sm text-muted-foreground">Good morning,</p>
           <h1 className="text-xl font-medium text-foreground">
             {user?.username && capitalize(user.username)}
           </h1>
@@ -79,28 +79,28 @@ export default function DashboardPage() {
             className="text-xs mb-1"
             style={{ color: "rgba(255,255,255,0.7)" }}
           >
-            Saldo totale
+            Total balance
           </p>
-          <p className="text-3xl font-medium text-white mb-4">€2.840,50</p>
+          <p className="text-3xl font-medium text-white mb-4">€2,840.50</p>
           <div className="flex gap-6">
             <div>
               <p
                 className="text-xs mb-1"
                 style={{ color: "rgba(255,255,255,0.6)" }}
               >
-                Entrate marzo
+                March income
               </p>
-              <p className="text-base font-medium text-white">+€3.200,00</p>
+              <p className="text-base font-medium text-white">+€3,200.00</p>
             </div>
             <div>
               <p
                 className="text-xs mb-1"
                 style={{ color: "rgba(255,255,255,0.6)" }}
               >
-                Uscite marzo
+                March expenses
               </p>
               <p className="text-base font-medium" style={{ color: "#9FE1CB" }}>
-                -€359,50
+                -€359.50
               </p>
             </div>
           </div>
@@ -115,8 +115,8 @@ export default function DashboardPage() {
         <CardContent className="p-4 flex items-center gap-3">
           <AlertCircle size={16} style={{ color: "#EF9F27", flexShrink: 0 }} />
           <p className="text-sm" style={{ color: "#EF9F27" }}>
-            <strong style={{ color: "#FAC775" }}>3 abbonamenti</strong> in
-            scadenza nei prossimi 5 giorni — €34,97 in uscita
+            <strong style={{ color: "#FAC775" }}>3 subscriptions</strong> expiring
+            in the next 5 days — €34.97 due
           </p>
         </CardContent>
       </Card>
@@ -124,14 +124,14 @@ export default function DashboardPage() {
       {/* Subscriptions */}
       <div className="flex justify-between items-center mb-3">
         <h2 className="text-base font-medium text-foreground">
-          Abbonamenti attivi
+          Active subscriptions
         </h2>
         <Button
           variant="ghost"
           className="text-sm h-auto p-0"
           style={{ color: "#1D9E75" }}
         >
-          vedi tutti
+          see all
         </Button>
       </div>
 
@@ -153,7 +153,7 @@ export default function DashboardPage() {
                   {sub.name}
                 </p>
                 <p className="text-xs text-muted-foreground">
-                  rinnova il {sub.renewDate}
+                  renews on {sub.renewDate}
                 </p>
               </div>
               <div className="text-right">
@@ -167,7 +167,7 @@ export default function DashboardPage() {
                     color: sub.daysLeft <= 5 ? "#EF9F27" : "#5DCAA5",
                   }}
                 >
-                  tra {sub.daysLeft} giorni
+                  in {sub.daysLeft} days
                 </span>
               </div>
             </CardContent>
@@ -177,11 +177,11 @@ export default function DashboardPage() {
 
       {/* Chart */}
       <h2 className="text-base font-medium text-foreground mb-3">
-        Spesa mensile
+        Monthly spending
       </h2>
       <Card className="border-border bg-surface">
         <CardContent className="p-4">
-          <p className="text-xs text-muted-foreground mb-3">Ultimi 6 mesi</p>
+          <p className="text-xs text-muted-foreground mb-3">Last 6 months</p>
           <div className="flex items-end gap-1.5 h-16 mb-1.5">
             {mockMonths.map((m) => (
               <div
@@ -203,10 +203,10 @@ export default function DashboardPage() {
           </div>
           <div className="flex justify-between items-center pt-3 border-t border-border">
             <span className="text-sm text-muted-foreground">
-              Totale abbonamenti marzo
+              Total subscriptions March
             </span>
             <span className="text-base font-medium text-foreground">
-              €103,97
+              €103.97
             </span>
           </div>
         </CardContent>

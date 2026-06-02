@@ -38,7 +38,7 @@ export const SubscriptionCard = ({
           <div className="flex-1 min-w-0">
             <p className="text-sm font-medium text-foreground truncate">{sub.name}</p>
             <p className="text-xs text-muted-foreground">
-              {recurrenceLabel[sub.recurrence]} · rinnova il {renewal}
+              {recurrenceLabel[sub.recurrence]} · renews on {renewal}
             </p>
           </div>
   
@@ -51,7 +51,7 @@ export const SubscriptionCard = ({
                 color: urgent ? "#EF9F27" : "#5DCAA5",
               }}
             >
-              {days === 0 ? "oggi" : `tra ${days}g`}
+              {days === 0 ? "today" : `in ${days}d`}
             </span>
           </div>
   

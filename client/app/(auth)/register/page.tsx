@@ -17,13 +17,13 @@ import { useRouter } from "next/navigation";
 
 const registerSchema = z
   .object({
-    username: z.string().min(3, "Minimo 3 caratteri"),
-    email: z.string().email("Email non valida"),
-    password: z.string().min(8, "Minimo 8 caratteri"),
+    username: z.string().min(3, "At least 3 characters"),
+    email: z.string().email("Invalid email"),
+    password: z.string().min(8, "At least 8 characters"),
     confirmPassword: z.string(),
   })
   .refine((data) => data.password === data.confirmPassword, {
-    message: "Le password non coincidono",
+    message: "Passwords do not match",
     path: ["confirmPassword"],
   });
 
@@ -54,7 +54,7 @@ export default function RegisterPage() {
   //   Login mutation
   const onRegister = useMutation({
     mutationFn: async (data: RegisterForm) => {
-      if (!signUp) throw new Error("Non pronto");
+      if (!signUp) throw new Error("Not ready");
       const emailAddress = data.email;
       const password = data.password;
       const username = data.username;
@@ -77,33 +77,33 @@ export default function RegisterPage() {
       const message = match(code)
         .with(
           "form_password_pwned",
-          () => "Password trovata in un data breach, usane una più sicura",
+          () => "Password found in a data breach, use a stronger one",
         )
         .with(
           "form_identifier_exists",
-          () => "Username già in uso, scegline un altro",
+          () => "Username already in use, choose another",
         )
-        .with("form_email_address_exists", () => "Email già in uso")
-        .with("form_identifier_not_found", () => "Email non trovata")
-        .with("session_exists", () => "Sei già loggato")
+        .with("form_email_address_exists", () => "Email already in use")
+        .with("form_identifier_not_found", () => "Email not found")
+        .with("session_exists", () => "You are already logged in")
         .with(
           "too_many_requests",
-          () => "Troppi tentativi, riprova tra qualche minuto",
+          () => "Too many attempts, try again in a few minutes",
         )
         .with(
           "form_password_size_in_bytes_exceeded",
-          () => "Password troppo lunga",
+          () => "Password too long",
         )
         .with(
           "form_username_invalid_character",
-          () => "Il nickname contiene caratteri non validi",
+          () => "The username contains invalid characters",
         )
-        .with("form_username_too_short", () => "Il nickname è troppo corto")
-        .with("form_username_too_long", () => "Il nickname è troppo lungo")
-        .with("form_param_nil", () => "Compila tutti i campi")
-        .with("form_param_format_invalid", () => "Formato non valido")
+        .with("form_username_too_short", () => "The username is too short")
+        .with("form_username_too_long", () => "The username is too long")
+        .with("form_param_nil", () => "Fill in all fields")
+        .with("form_param_format_invalid", () => "Invalid format")
         .otherwise(
-          () => error.errors?.[0]?.message ?? "Qualcosa è andato storto",
+          () => error.errors?.[0]?.message ?? "Something went wrong",
         );
 
       setError(message);
@@ -112,7 +112,7 @@ export default function RegisterPage() {
 
   const onSubmit = (data: RegisterForm) => {
     if (passScore < 3) {
-      setError("La password deve essere almeno 'Buona'");
+      setError("The password must be at least 'Good'");
       return;
     }
     onRegister.mutate(data);
@@ -142,13 +142,13 @@ export default function RegisterPage() {
           </div>
 
           <div className="mb-1 text-2xl font-medium text-foreground">
-            Crea account
+            Create account
           </div>
           <div
             className="text-sm mb-6 text-muted-foreground"
             style={{ lineHeight: 1.5 }}
           >
-            Crea il tuo account per iniziare.
+            Create your account to get started.
           </div>
 
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
@@ -189,7 +189,7 @@ export default function RegisterPage() {
             </Field>
             <Field>
               <FieldLabel className="text-muted-foreground text-xs">
-                Conferma password
+                Confirm password
               </FieldLabel>
               <Input
                 type="password"
@@ -204,7 +204,7 @@ export default function RegisterPage() {
               type="submit"
               className="w-full bg-primary hover:bg-primary-hover text-primary-foreground"
             >
-              Crea account
+              Create account
             </Button>
             {error && <FieldError>{error}</FieldError>}
 
@@ -212,9 +212,9 @@ export default function RegisterPage() {
           </form>
 
           <p className="text-sm text-center text-muted-foreground mt-4">
-            Hai già un account?{" "}
+            Already have an account?{" "}
             <Link href="/login" className="text-primary hover:underline">
-              Accedi
+              Sign in
             </Link>
           </p>
         </div>

@@ -64,7 +64,7 @@ function SubscriptionForm({
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),
       });
-      if (!res.ok) throw new Error("Errore nel salvataggio");
+      if (!res.ok) throw new Error("Save error");
       return res.json();
     },
     onSuccess: () => {
@@ -79,17 +79,17 @@ function SubscriptionForm({
       className="space-y-4 p-4"
     >
       <Field>
-        <FieldLabel className="text-muted-foreground text-xs">Nome</FieldLabel>
+        <FieldLabel className="text-muted-foreground text-xs">Name</FieldLabel>
         <Input
           {...register("name")}
-          placeholder="es. Netflix"
+          placeholder="e.g. Netflix"
           className="bg-muted border-border text-foreground placeholder:text-muted-foreground focus-visible:ring-primary"
         />
         {errors.name && <FieldError>{errors.name.message}</FieldError>}
       </Field>
 
       <Field>
-        <FieldLabel className="text-muted-foreground text-xs">Importo (€)</FieldLabel>
+        <FieldLabel className="text-muted-foreground text-xs">Amount (€)</FieldLabel>
         <Input
           {...register("amount")}
           type="number"
@@ -102,7 +102,7 @@ function SubscriptionForm({
       </Field>
 
       <Field>
-        <FieldLabel className="text-muted-foreground text-xs">Data primo rinnovo</FieldLabel>
+        <FieldLabel className="text-muted-foreground text-xs">First renewal date</FieldLabel>
         {breakpoint === "desktop" ? (
           <Popover open={calOpen} onOpenChange={setCalOpen}>
             <PopoverTrigger asChild>
@@ -112,8 +112,8 @@ function SubscriptionForm({
               >
                 <span className={watch("startDate") ? "text-foreground" : "text-muted-foreground"}>
                   {watch("startDate")
-                    ? parseDateString(watch("startDate"))?.toLocaleDateString("it-IT", { day: "2-digit", month: "long", year: "numeric" })
-                    : "Seleziona una data"}
+                    ? parseDateString(watch("startDate"))?.toLocaleDateString("en-US", { day: "2-digit", month: "long", year: "numeric" })
+                    : "Select a date"}
                 </span>
                 <CalendarIcon size={14} className="text-muted-foreground" />
               </button>
@@ -142,7 +142,7 @@ function SubscriptionForm({
       </Field>
 
       <Field>
-        <FieldLabel className="text-muted-foreground text-xs">Ricorrenza</FieldLabel>
+        <FieldLabel className="text-muted-foreground text-xs">Recurrence</FieldLabel>
         <div className="relative">
           <button
             type="button"
@@ -184,10 +184,10 @@ function SubscriptionForm({
         style={{ backgroundColor: "#1D9E75", color: "#fff" }}
       >
         {mutation.isPending
-          ? "Salvataggio..."
+          ? "Saving..."
           : editing
-          ? "Salva modifiche"
-          : "Aggiungi abbonamento"}
+          ? "Save changes"
+          : "Add subscription"}
       </Button>
     </form>
   );
@@ -203,7 +203,7 @@ export const SubscriptionSheet = ({
   onClose: () => void;
 }) => {
   const breakpoint = useBreakpoint();
-  const title = editing ? "Modifica abbonamento" : "Nuovo abbonamento";
+  const title = editing ? "Edit subscription" : "New subscription";
 
   if (breakpoint === "mobile") {
     return (

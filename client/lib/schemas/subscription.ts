@@ -1,11 +1,11 @@
 import { z } from "zod";
 
 export const RECURRENCE_CONFIG = {
-  WEEKLY:     { label: "Settimanale", days: 7,   multiplier: 4.33 },
-  MONTHLY:    { label: "Mensile",     days: 30,  multiplier: 1 },
-  QUARTERLY:  { label: "Trimestrale", days: 90,  multiplier: 1 / 3 },
-  SEMIANNUAL: { label: "Semestrale",  days: 180, multiplier: 1 / 6 },
-  ANNUAL:     { label: "Annuale",     days: 365, multiplier: 1 / 12 },
+  WEEKLY:     { label: "Weekly",      days: 7,   multiplier: 4.33 },
+  MONTHLY:    { label: "Monthly",     days: 30,  multiplier: 1 },
+  QUARTERLY:  { label: "Quarterly",   days: 90,  multiplier: 1 / 3 },
+  SEMIANNUAL: { label: "Semi-annual", days: 180, multiplier: 1 / 6 },
+  ANNUAL:     { label: "Annual",      days: 365, multiplier: 1 / 12 },
 } as const;
 
 export const recurrenceSchema = z.enum(
@@ -15,9 +15,9 @@ export const recurrenceSchema = z.enum(
 export type Recurrence = z.infer<typeof recurrenceSchema>;
 
 export const subscriptionSchema = z.object({
-  name: z.string().min(1, "Nome obbligatorio"),
-  amount: z.string().min(1, "Importo obbligatorio"),
-  startDate: z.string().min(1, "Data obbligatoria"),
+  name: z.string().min(1, "Name required"),
+  amount: z.string().min(1, "Amount required"),
+  startDate: z.string().min(1, "Date required"),
   recurrence: recurrenceSchema,
 });
 

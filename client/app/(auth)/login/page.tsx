@@ -14,8 +14,8 @@ import { match } from "ts-pattern";
 import { useRouter } from "next/navigation";
 
 const loginSchema = z.object({
-  email: z.string().email("Email non valida"),
-  password: z.string().min(8, "Minimo 8 caratteri"),
+  email: z.string().email("Invalid email"),
+  password: z.string().min(8, "At least 8 characters"),
 });
 
 type LoginForm = z.infer<typeof loginSchema>;
@@ -30,15 +30,15 @@ export default function LoginPage() {
 
   const onLogin = useMutation({
     mutationFn: async (data: LoginForm) => {
-      if (!signIn) throw new Error("Non pronto");
-    
+      if (!signIn) throw new Error("Not ready");
+
       const { error } = await signIn.password({
         emailAddress: data.email,
         password: data.password,
       });
-    
+
       if (error) throw error;
-    
+
       if (signIn.status === "complete") {
         await signIn.finalize({
           navigate: ({ decorateUrl }) => {
@@ -47,7 +47,7 @@ export default function LoginPage() {
           },
         });
       } else {
-        throw new Error(`Stato inatteso: ${signIn.status}`);
+        throw new Error(`Unexpected status: ${signIn.status}`);
       }
     },
     onSuccess: (status) => {
@@ -57,13 +57,13 @@ export default function LoginPage() {
     onError: (error: any) => {
       const code = error.errors?.[0]?.code;
       const message = match(code)
-        .with("form_password_incorrect", () => "Password errata")
-        .with("form_identifier_not_found", () => "Nessun account trovato con questa email")
-        .with("session_exists", () => "Sei già loggato")
-        .with("too_many_requests", () => "Troppi tentativi, riprova tra qualche minuto")
-        .with("form_param_format_invalid", () => "Formato email non valido")
-        .with("form_identifier_exists", () => "Account già esistente")
-        .otherwise(() => error.errors?.[0]?.message ?? "Qualcosa è andato storto");
+        .with("form_password_incorrect", () => "Incorrect password")
+        .with("form_identifier_not_found", () => "No account found with this email")
+        .with("session_exists", () => "You are already logged in")
+        .with("too_many_requests", () => "Too many attempts, try again in a few minutes")
+        .with("form_param_format_invalid", () => "Invalid email format")
+        .with("form_identifier_exists", () => "Account already exists")
+        .otherwise(() => error.errors?.[0]?.message ?? "Something went wrong");
       setClerkError(message);
     },
   });
@@ -87,9 +87,9 @@ export default function LoginPage() {
           <span className="text-base font-medium text-foreground">Gyo Finance</span>
         </div>
 
-        <div className="mb-1 text-2xl font-medium text-foreground">Bentornato</div>
+        <div className="mb-1 text-2xl font-medium text-foreground">Welcome back</div>
         <div className="text-sm mb-6 text-muted-foreground" style={{ lineHeight: 1.5 }}>
-          Accedi al tuo account per continuare.
+          Sign in to your account to continue.
         </div>
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
@@ -106,7 +106,7 @@ export default function LoginPage() {
           <Field>
             <div className="flex justify-between items-center">
               <FieldLabel className="text-muted-foreground text-xs">Password</FieldLabel>
-              <span className="text-xs cursor-pointer text-primary">Password dimenticata?</span>
+              <span className="text-xs cursor-pointer text-primary">Forgot password?</span>
             </div>
             <Input
               type="password"
@@ -117,15 +117,15 @@ export default function LoginPage() {
             <FieldError>{errors.password?.message}</FieldError>
           </Field>
           <Button type="submit" className="w-full bg-primary hover:bg-primary-hover text-primary-foreground">
-            Accedi
+            Sign in
           </Button>
           {clerkError && <FieldError>{clerkError}</FieldError>}
         </form>
 
         <p className="text-sm text-center text-muted-foreground mt-4">
-          Non hai un account?{" "}
+          Don't have an account?{" "}
           <Link href="/register" className="text-primary hover:underline">
-            Registrati
+            Sign up
           </Link>
         </p>
       </div>
