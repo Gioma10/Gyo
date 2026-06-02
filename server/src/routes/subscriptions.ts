@@ -4,7 +4,7 @@ import { z } from "zod";
 
 const subscriptionSchema = z.object({
   name: z.string().min(1),
-  amount: z.number().positive(),
+  amount: z.coerce.number().positive(),
   startDate: z.coerce.date(),
   recurrence: z.enum([
     "WEEKLY",
@@ -37,7 +37,7 @@ export const subscriptionsRoutes = async (fastify: FastifyInstance) => {
     "/",
     { preHandler: [fastify.requireAuth] },
     async (req, reply) => {
-      const { userId } = req.auth;
+      const userId = req.auth.userId as string;
       const body = subscriptionSchema.parse(req.body);
 
       const subscription = await prisma.subscription.create({
