@@ -22,19 +22,40 @@ export const webhookRoutes = async (fastify: FastifyInstance) => {
     }
 
     if (event.type === "user.created") {
-        const { id, email_addresses, username } = event.data;
-        const email = email_addresses?.[0]?.email_address;
-      
-        if (!email) return reply.status(200).send({ received: true });
-      
-        await prisma.user.create({
-          data: {
-            id,
-            email,
-            username: username ?? null,
-          },
-        });
-      }
+      const { id, email_addresses, username } = event.data;
+      const email = email_addresses?.[0]?.email_address;
+
+      if (!email) return reply.status(200).send({ received: true });
+
+      await prisma.user.create({
+        data: {
+          id,
+          email,
+          username: username ?? null,
+        },
+      });
+    }
+
+    if (event.type === "user.updated") {
+      const { id, email_addresses, username } = event.data;
+      const email = email_addresses?.[0]?.email_address;
+
+      await prisma.user.update({
+        where: { id },
+        data: {
+          ...(email && { email }),
+          ...(username && { username }),
+        },
+      });
+    }
+
+    if (event.type === "user.deleted") {
+      const { id } = event.data;
+
+      await prisma.user.delete({
+        where: { id },
+      });
+    }
 
     return reply.status(200).send({ received: true });
   });

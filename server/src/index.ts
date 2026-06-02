@@ -5,6 +5,7 @@ import { clerkPlugin, getAuth } from '@clerk/fastify'
 import { subscriptionsRoutes } from './routes/subscriptions.js'
 import fp from 'fastify-plugin'
 import { webhookRoutes } from './routes/webhook.js'
+import { userRoutes } from './routes/user/index.js'
 
 
 const app = Fastify({ logger: true })
@@ -35,6 +36,8 @@ const start = async () => {
   })
 
   await app.register(subscriptionsRoutes, { prefix: '/api/subscriptions' })
+
+  await app.register(userRoutes, { prefix: '/api/user' })
 
   await app.register(webhookRoutes);
 
