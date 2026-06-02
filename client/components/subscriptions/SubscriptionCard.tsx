@@ -43,7 +43,7 @@ export const SubscriptionCard = ({
           </div>
   
           <div className="text-right shrink-0 mr-2">
-            <p className="text-sm font-medium text-foreground">€{sub.amount.toFixed(2)}</p>
+            <p className="text-sm font-medium text-foreground">€{parseFloat(sub.amount).toFixed(2)}</p>
             <span
               className="text-xs px-2 py-0.5 rounded-full"
               style={{

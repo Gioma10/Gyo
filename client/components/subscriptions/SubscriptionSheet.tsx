@@ -92,9 +92,8 @@ function SubscriptionForm({
         <FieldLabel className="text-muted-foreground text-xs">Amount (€)</FieldLabel>
         <Input
           {...register("amount")}
-          type="number"
-          step="0.01"
-          min={0}
+          type="text"
+          inputMode="decimal"
           placeholder="0.00"
           className="[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none bg-muted border-border text-foreground placeholder:text-muted-foreground focus-visible:ring-primary"
         />

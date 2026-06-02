@@ -33,7 +33,7 @@ enum Recurrence {
 model Subscription {
   id          String     @id @default(cuid())
   name        String
-  amount      Float
+  amount      String
   startDate   DateTime
   recurrence  Recurrence @default(MONTHLY)
   userId      String

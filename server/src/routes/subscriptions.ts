@@ -4,7 +4,7 @@ import { z } from "zod";
 
 const subscriptionSchema = z.object({
   name: z.string().min(1),
-  amount: z.coerce.number().positive(),
+  amount: z.string().min(1),
   startDate: z.coerce.date(),
   recurrence: z.enum([
     "WEEKLY",

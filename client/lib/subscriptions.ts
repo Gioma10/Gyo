@@ -25,5 +25,5 @@ export function nextRenewalDate(startDate: string, recurrence: Recurrence): stri
 }
 
 export function totalMonthly(subs: Subscription[]): number {
-  return subs.reduce((sum, s) => sum + s.amount * RECURRENCE_CONFIG[s.recurrence].multiplier, 0);
+  return subs.reduce((sum, s) => sum + parseFloat(s.amount) * RECURRENCE_CONFIG[s.recurrence].multiplier, 0);
 }
