@@ -1,13 +1,18 @@
 "use client"
 
 import { useAuth } from "@clerk/nextjs";
-import { Loader2 } from "lucide-react";
 import { redirect } from "next/navigation";
 
-export const AssertAuth = ({ children }: { children: React.ReactNode }) => {
+export const AssertAuth = ({
+  children,
+  fallback,
+}: {
+  children: React.ReactNode;
+  fallback?: React.ReactNode;
+}) => {
   const { isSignedIn, isLoaded } = useAuth();
 
-  if (!isLoaded) return <Loader2 className="animate-spin" />;
+  if (!isLoaded) return fallback ?? null;
 
   if (!isSignedIn) {
     redirect("/login");

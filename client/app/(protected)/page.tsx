@@ -6,36 +6,11 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 
 import { capitalize } from "@/utils/string-fromatting";
+import { ActiveSub } from "@/components/dashboard/ActiveSub";
+import { useQuery } from "@tanstack/react-query";
+import { Subscription } from "@/lib/schemas/subscription";
 
-const mockSubscriptions = [
-  {
-    id: 1,
-    name: "Netflix",
-    amount: 17.99,
-    renewDate: "March 20",
-    daysLeft: 2,
-    color: "#1a0505",
-    iconColor: "#E24B4A",
-  },
-  {
-    id: 2,
-    name: "Spotify",
-    amount: 10.99,
-    renewDate: "March 22",
-    daysLeft: 4,
-    color: "#041a10",
-    iconColor: "#1D9E75",
-  },
-  {
-    id: 3,
-    name: "ChatGPT Plus",
-    amount: 20.0,
-    renewDate: "April 5",
-    daysLeft: 18,
-    color: "#0a1220",
-    iconColor: "#378ADD",
-  },
-];
+
 
 const mockMonths = [
   { label: "oct", height: 55 },
@@ -48,6 +23,15 @@ const mockMonths = [
 
 export default function DashboardPage() {
   const { user } = useUser();
+
+  const {data: subs} = useQuery<Subscription[]>({
+    queryKey: ["subscriptions"],
+    queryFn: async () => {
+      const res = await fetch("/api/subscriptions");
+      if (!res.ok) throw new Error("Loading error");
+      return res.json();
+    },
+  });
 
   return (
     <div className="min-h-screen bg-background">
@@ -108,7 +92,7 @@ export default function DashboardPage() {
       </Card>
 
       {/* Alert */}
-      <Card
+      {/* <Card
         className="mb-5"
         style={{ backgroundColor: "#1a1205", borderColor: "#BA7517" }}
       >
@@ -119,61 +103,10 @@ export default function DashboardPage() {
             in the next 5 days — €34.97 due
           </p>
         </CardContent>
-      </Card>
+      </Card> */}
 
       {/* Subscriptions */}
-      <div className="flex justify-between items-center mb-3">
-        <h2 className="text-base font-medium text-foreground">
-          Active subscriptions
-        </h2>
-        <Button
-          variant="ghost"
-          className="text-sm h-auto p-0"
-          style={{ color: "#1D9E75" }}
-        >
-          see all
-        </Button>
-      </div>
-
-      <div className="flex flex-col gap-2 mb-5">
-        {mockSubscriptions.map((sub) => (
-          <Card key={sub.id} className="border-border bg-surface">
-            <CardContent className="p-4 flex items-center gap-3">
-              <div
-                className="w-9 h-9 rounded-lg flex items-center justify-center shrink-0"
-                style={{ backgroundColor: sub.color }}
-              >
-                <div
-                  className="w-4 h-4 rounded-sm"
-                  style={{ backgroundColor: sub.iconColor }}
-                />
-              </div>
-              <div className="flex-1">
-                <p className="text-sm font-medium text-foreground">
-                  {sub.name}
-                </p>
-                <p className="text-xs text-muted-foreground">
-                  renews on {sub.renewDate}
-                </p>
-              </div>
-              <div className="text-right">
-                <p className="text-sm font-medium text-foreground">
-                  €{parseFloat(sub.amount).toFixed(2)}
-                </p>
-                <span
-                  className="text-xs px-2 py-0.5 rounded-full"
-                  style={{
-                    backgroundColor: sub.daysLeft <= 5 ? "#1a1205" : "#041a10",
-                    color: sub.daysLeft <= 5 ? "#EF9F27" : "#5DCAA5",
-                  }}
-                >
-                  in {sub.daysLeft} days
-                </span>
-              </div>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
+      <ActiveSub subscriptions={subs} />
 
       {/* Chart */}
       <h2 className="text-base font-medium text-foreground mb-3">
