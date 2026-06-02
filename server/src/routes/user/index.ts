@@ -22,6 +22,11 @@ export const userRoutes = async (fastify: FastifyInstance) => {
 
         const updated = await clerk.users.updateUser(userId, { username });
 
+        await prisma.user.update({
+            where: { id: userId },
+            data: { username: updated.username },
+        });
+
         return reply.send({ username: updated.username });
     });
 
