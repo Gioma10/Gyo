@@ -65,7 +65,13 @@ export default function LoginPage() {
         .with("too_many_requests", () => "Too many attempts, try again in a few minutes")
         .with("form_param_format_invalid", () => "Invalid email format")
         .with("form_identifier_exists", () => "Account already exists")
-        .otherwise(() => error.errors?.[0]?.message ?? "Something went wrong");
+        .otherwise(
+          () =>
+            error.errors?.[0]?.message ??
+            error.message ??
+            `Something went wrong${error.errors?.[0]?.code ? ` [${error.errors[0].code}]` : ""}`
+        );
+      console.error("Clerk sign-in error:", error);
       setClerkError(message);
     },
   });
