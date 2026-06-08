@@ -5,6 +5,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { Field, FieldLabel, FieldError } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
+import { PasswordInput } from "@/components/ui/password-input";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { useMutation } from "@tanstack/react-query";
@@ -179,8 +180,7 @@ export default function RegisterPage() {
               <FieldLabel className="text-muted-foreground text-xs">
                 Password
               </FieldLabel>
-              <Input
-                type="password"
+              <PasswordInput
                 placeholder="••••••••"
                 className="bg-muted border-border text-foreground placeholder:text-muted-foreground focus-visible:ring-primary"
                 {...register("password")}
@@ -191,8 +191,7 @@ export default function RegisterPage() {
               <FieldLabel className="text-muted-foreground text-xs">
                 Confirm password
               </FieldLabel>
-              <Input
-                type="password"
+              <PasswordInput
                 placeholder="••••••••"
                 className="bg-muted border-border text-foreground placeholder:text-muted-foreground focus-visible:ring-primary"
                 {...register("confirmPassword")}

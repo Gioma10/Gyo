@@ -5,8 +5,10 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { Field, FieldLabel, FieldError } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
+import { PasswordInput } from "@/components/ui/password-input";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import Image from "next/image";
 import { useSignIn } from "@clerk/nextjs";
 import { useMutation } from "@tanstack/react-query";
 import { useState } from "react";
@@ -78,12 +80,7 @@ export default function LoginPage() {
       <div className="w-full max-w-md rounded-xl p-8 bg-surface border border-border">
 
         <div className="flex items-center gap-2 mb-7">
-          <div className="w-7 h-7 rounded-md flex items-center justify-center bg-primary">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5">
-              <circle cx="12" cy="12" r="10" />
-              <path d="M8 12l2 2 4-4" />
-            </svg>
-          </div>
+          <Image src="/logo-mark.png" alt="Gyo" width={28} height={28} className="w-7 h-7 object-contain" priority />
           <span className="text-base font-medium text-foreground">Gyo Finance</span>
         </div>
 
@@ -108,8 +105,7 @@ export default function LoginPage() {
               <FieldLabel className="text-muted-foreground text-xs">Password</FieldLabel>
               <span className="text-xs cursor-pointer text-primary">Forgot password?</span>
             </div>
-            <Input
-              type="password"
+            <PasswordInput
               placeholder="••••••••"
               className="bg-muted border-border text-foreground placeholder:text-muted-foreground focus-visible:ring-primary"
               {...register("password")}
