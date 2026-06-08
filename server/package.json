@@ -6,7 +6,9 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "nodemon --exec tsx src/index.ts"
+    "dev": "nodemon --exec tsx src/index.ts",
+    "build": "prisma generate",
+    "start": "tsx src/index.ts"
   },
   "keywords": [],
   "author": "",
@@ -22,13 +24,13 @@
     "fastify-plugin": "^5.1.0",
     "prisma": "^7.6.0",
     "svix": "^1.90.0",
+    "tsx": "^4.21.0",
     "zod": "^4.3.6"
   },
   "devDependencies": {
     "@types/node": "^25.5.0",
     "nodemon": "^3.1.14",
     "ts-node": "^10.9.2",
-    "tsx": "^4.21.0",
     "typescript": "^5.9.3"
   }
 }

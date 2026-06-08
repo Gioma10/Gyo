@@ -12,8 +12,13 @@ import { userRoutes } from './routes/user/index.js'
 const app = Fastify({ logger: true })
 
 const start = async () => {
+  const allowedOrigins = [
+    'http://localhost:3000',
+    process.env.CLIENT_URL,
+  ].filter(Boolean) as string[]
+
   await app.register(cors, {
-    origin: 'http://localhost:3000',
+    origin: allowedOrigins,
     methods: ['GET', 'POST', 'PATCH', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization'],
     credentials: true,
@@ -44,7 +49,7 @@ const start = async () => {
 
   await app.register(webhookRoutes);
 
-  await app.listen({ port: Number(process.env.PORT) || 8080 })
+  await app.listen({ port: Number(process.env.PORT) || 8080, host: '0.0.0.0' })
 }
 
 start()
