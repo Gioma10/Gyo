@@ -6,6 +6,7 @@ const subscriptionSchema = z.object({
   name: z.string().min(1),
   amount: z.string().min(1),
   startDate: z.coerce.date(),
+  endDate: z.coerce.date().nullable().optional(),
   recurrence: z.enum([
     "WEEKLY",
     "MONTHLY",

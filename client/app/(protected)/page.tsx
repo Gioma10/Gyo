@@ -1,7 +1,7 @@
 "use client";
 
 import { useUser } from "@clerk/nextjs";
-import { Bell, AlertCircle } from "lucide-react";
+import { Bell } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 
@@ -9,8 +9,7 @@ import { capitalize } from "@/utils/string-fromatting";
 import { ActiveSub } from "@/components/dashboard/ActiveSub";
 import { useQuery } from "@tanstack/react-query";
 import { Subscription } from "@/lib/schemas/subscription";
-
-
+import { BalanceBanner } from "@/components/dashboard/BalanceBanner";
 
 const mockMonths = [
   { label: "oct", height: 55 },
@@ -24,7 +23,7 @@ const mockMonths = [
 export default function DashboardPage() {
   const { user } = useUser();
 
-  const {data: subs} = useQuery<Subscription[]>({
+  const { data: subs } = useQuery<Subscription[]>({
     queryKey: ["subscriptions"],
     queryFn: async () => {
       const res = await fetch("/api/subscriptions");
@@ -57,53 +56,7 @@ export default function DashboardPage() {
       </div>
 
       {/* Balance card */}
-      <Card className="mb-4 border-0" style={{ backgroundColor: "#1D9E75" }}>
-        <CardContent className="p-5">
-          <p
-            className="text-xs mb-1"
-            style={{ color: "rgba(255,255,255,0.7)" }}
-          >
-            Total balance
-          </p>
-          <p className="text-3xl font-medium text-white mb-4">€2,840.50</p>
-          <div className="flex gap-6">
-            <div>
-              <p
-                className="text-xs mb-1"
-                style={{ color: "rgba(255,255,255,0.6)" }}
-              >
-                March income
-              </p>
-              <p className="text-base font-medium text-white">+€3,200.00</p>
-            </div>
-            <div>
-              <p
-                className="text-xs mb-1"
-                style={{ color: "rgba(255,255,255,0.6)" }}
-              >
-                March expenses
-              </p>
-              <p className="text-base font-medium" style={{ color: "#9FE1CB" }}>
-                -€359.50
-              </p>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Alert */}
-      {/* <Card
-        className="mb-5"
-        style={{ backgroundColor: "#1a1205", borderColor: "#BA7517" }}
-      >
-        <CardContent className="p-4 flex items-center gap-3">
-          <AlertCircle size={16} style={{ color: "#EF9F27", flexShrink: 0 }} />
-          <p className="text-sm" style={{ color: "#EF9F27" }}>
-            <strong style={{ color: "#FAC775" }}>3 subscriptions</strong> expiring
-            in the next 5 days — €34.97 due
-          </p>
-        </CardContent>
-      </Card> */}
+      <BalanceBanner />
 
       {/* Subscriptions */}
       <ActiveSub subscriptions={subs} />

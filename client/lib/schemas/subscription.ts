@@ -18,6 +18,7 @@ export const subscriptionSchema = z.object({
   name: z.string().min(1, "Name required"),
   amount: z.string().min(1, "Amount required"),
   startDate: z.string().min(1, "Date required"),
+  endDate: z.string().optional(), // "" = ancora attivo; "YYYY-MM-DD" = disdetto
   recurrence: recurrenceSchema,
 });
 
@@ -26,6 +27,7 @@ export type SubscriptionFormValues = z.infer<typeof subscriptionSchema>;
 export const subscriptionResponseSchema = subscriptionSchema.extend({
   id: z.string(),
   userId: z.string(),
+  endDate: z.string().nullable(),
   createdAt: z.string(),
   updatedAt: z.string(),
 });

@@ -26,6 +26,74 @@ function toDateString(d: Date): string {
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
 }
 
+function DateField({
+  value,
+  onChange,
+  placeholder,
+  clearable = false,
+}: {
+  value: string;
+  onChange: (v: string) => void;
+  placeholder: string;
+  clearable?: boolean;
+}) {
+  const [open, setOpen] = useState(false);
+  const breakpoint = useBreakpoint();
+
+  if (breakpoint === "desktop") {
+    return (
+      <Popover open={open} onOpenChange={setOpen}>
+        <PopoverTrigger asChild>
+          <button
+            type="button"
+            className="w-full flex items-center justify-between px-3 py-2 rounded-md bg-muted border border-border text-sm text-foreground"
+          >
+            <span className={value ? "text-foreground" : "text-muted-foreground"}>
+              {value
+                ? parseDateString(value)?.toLocaleDateString("en-US", { day: "2-digit", month: "long", year: "numeric" })
+                : placeholder}
+            </span>
+            <CalendarIcon size={14} className="text-muted-foreground" />
+          </button>
+        </PopoverTrigger>
+        <PopoverContent className="w-auto">
+          <Calendar
+            mode="single"
+            selected={parseDateString(value)}
+            onSelect={(date) => {
+              if (date) {
+                onChange(toDateString(date));
+                setOpen(false);
+              }
+            }}
+          />
+          {clearable && value && (
+            <button
+              type="button"
+              onClick={() => {
+                onChange("");
+                setOpen(false);
+              }}
+              className="w-full text-center px-3 py-2 text-xs text-muted-foreground hover:text-foreground border-t border-border"
+            >
+              Clear
+            </button>
+          )}
+        </PopoverContent>
+      </Popover>
+    );
+  }
+
+  return (
+    <Input
+      type="date"
+      value={value}
+      onChange={(e) => onChange(e.target.value)}
+      className="bg-muted border-border text-foreground focus-visible:ring-primary"
+    />
+  );
+}
+
 function SubscriptionForm({
   editing,
   onClose,
@@ -34,8 +102,6 @@ function SubscriptionForm({
   onClose: () => void;
 }) {
   const [recOpen, setRecOpen] = useState(false);
-  const [calOpen, setCalOpen] = useState(false);
-  const breakpoint = useBreakpoint();
   const queryClient = useQueryClient();
 
   const {
@@ -50,6 +116,7 @@ function SubscriptionForm({
       name: editing?.name ?? "",
       amount: editing?.amount,
       startDate: editing?.startDate ? editing.startDate.slice(0, 10) : "",
+      endDate: editing?.endDate ? editing.endDate.slice(0, 10) : "",
       recurrence: editing?.recurrence ?? "MONTHLY",
     },
   });
@@ -62,7 +129,7 @@ function SubscriptionForm({
       const res = await fetch(url, {
         method: editing ? "PATCH" : "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
+        body: JSON.stringify({ ...data, endDate: data.endDate || null }),
       });
       if (!res.ok) throw new Error("Save error");
       return res.json();
@@ -102,42 +169,27 @@ function SubscriptionForm({
 
       <Field>
         <FieldLabel className="text-muted-foreground text-xs">First renewal date</FieldLabel>
-        {breakpoint === "desktop" ? (
-          <Popover open={calOpen} onOpenChange={setCalOpen}>
-            <PopoverTrigger asChild>
-              <button
-                type="button"
-                className="w-full flex items-center justify-between px-3 py-2 rounded-md bg-muted border border-border text-sm text-foreground"
-              >
-                <span className={watch("startDate") ? "text-foreground" : "text-muted-foreground"}>
-                  {watch("startDate")
-                    ? parseDateString(watch("startDate"))?.toLocaleDateString("en-US", { day: "2-digit", month: "long", year: "numeric" })
-                    : "Select a date"}
-                </span>
-                <CalendarIcon size={14} className="text-muted-foreground" />
-              </button>
-            </PopoverTrigger>
-            <PopoverContent className="w-auto">
-              <Calendar
-                mode="single"
-                selected={parseDateString(watch("startDate"))}
-                onSelect={(date) => {
-                  if (date) {
-                    setValue("startDate", toDateString(date));
-                    setCalOpen(false);
-                  }
-                }}
-              />
-            </PopoverContent>
-          </Popover>
-        ) : (
-          <Input
-            {...register("startDate")}
-            type="date"
-            className="bg-muted border-border text-foreground focus-visible:ring-primary"
-          />
-        )}
+        <DateField
+          value={watch("startDate")}
+          onChange={(v) => setValue("startDate", v)}
+          placeholder="Select a date"
+        />
         {errors.startDate && <FieldError>{errors.startDate.message}</FieldError>}
+      </Field>
+
+      <Field>
+        <FieldLabel className="text-muted-foreground text-xs">
+          End date (optional)
+        </FieldLabel>
+        <DateField
+          value={watch("endDate") ?? ""}
+          onChange={(v) => setValue("endDate", v)}
+          placeholder="Still active"
+          clearable
+        />
+        <p className="text-xs text-muted-foreground">
+          Set this when you cancel a subscription. Leave empty if it&apos;s still active.
+        </p>
       </Field>
 
       <Field>

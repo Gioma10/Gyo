@@ -13,13 +13,13 @@ datasource db {
 }
 
 model User {
-  id        String   @id
-  email     String   @unique
-  username  String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
+  id            String         @id
+  email         String         @unique
+  username      String
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
   subscriptions Subscription[]
+  monthlySpends MonthlySpend[]
 }
 
 enum Recurrence {
@@ -31,13 +31,26 @@ enum Recurrence {
 }
 
 model Subscription {
-  id          String     @id @default(cuid())
-  name        String
-  amount      String
-  startDate   DateTime
-  recurrence  Recurrence @default(MONTHLY)
-  userId      String
-  user        User       @relation(fields: [userId], references: [id])
-  createdAt   DateTime   @default(now())
-  updatedAt   DateTime   @updatedAt
+  id         String     @id @default(cuid())
+  name       String
+  amount     String
+  startDate  DateTime
+  endDate    DateTime?  // null = ancora attivo; valorizzato = disdetto (≠ cancellazione)
+  recurrence Recurrence @default(MONTHLY)
+  userId     String
+  user       User       @relation(fields: [userId], references: [id])
+  createdAt  DateTime   @default(now())
+  updatedAt  DateTime   @updatedAt
+}
+
+model MonthlySpend {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  month     DateTime // sempre il 1° del mese, es. 2026-03-01T00:00:00Z
+  total     Decimal  @db.Decimal(10, 2)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([userId, month])
 }
