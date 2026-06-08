@@ -3,6 +3,7 @@ import Fastify from 'fastify'
 import cors from '@fastify/cors'
 import { clerkPlugin, getAuth } from '@clerk/fastify'
 import { subscriptionsRoutes } from './routes/subscriptions.js'
+import { monthlySpendRoutes } from './routes/monthly-spend.js'
 import fp from 'fastify-plugin'
 import { webhookRoutes } from './routes/webhook.js'
 import { userRoutes } from './routes/user/index.js'
@@ -36,6 +37,8 @@ const start = async () => {
   })
 
   await app.register(subscriptionsRoutes, { prefix: '/api/subscriptions' })
+
+  await app.register(monthlySpendRoutes, { prefix: '/api/monthly-spend' })
 
   await app.register(userRoutes, { prefix: '/api/user' })
 
