@@ -18,6 +18,24 @@ export function PageSkeleton() {
           <Skeleton key={i} className="h-16 w-full rounded-xl" />
         ))}
       </div>
+
+      {/* chart */}
+      <div className="flex flex-col gap-4 rounded-xl border border-border bg-surface p-4">
+        <Skeleton className="h-3 w-20 rounded" />
+        <div className="flex items-end justify-between gap-2 h-[120px]">
+          {[55, 80, 45, 95, 65, 100].map((h, i) => (
+            <Skeleton
+              key={i}
+              className="flex-1 rounded-md"
+              style={{ height: `${h}%` }}
+            />
+          ))}
+        </div>
+        <div className="flex justify-between items-center pt-3 border-t border-border">
+          <Skeleton className="h-4 w-40 rounded" />
+          <Skeleton className="h-4 w-16 rounded" />
+        </div>
+      </div>
     </div>
   );
 }

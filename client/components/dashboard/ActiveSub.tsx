@@ -15,6 +15,8 @@ function iconColorFromName(name: string): string {
 export const ActiveSub = ({ subscriptions }: { subscriptions?: Subscription[] }) => {
   if (!subscriptions) return null;
 
+  const viewSubs = subscriptions.slice(0,3).map((item)=>item)
+
   return (
     <>
       <div className="flex justify-between items-center mb-3">
@@ -25,7 +27,7 @@ export const ActiveSub = ({ subscriptions }: { subscriptions?: Subscription[] })
       </div>
 
       <div className="flex flex-col gap-2 mb-5">
-        {subscriptions.map((sub) => {
+        {viewSubs.map((sub) => {
           const days = daysUntilNextRenewal(sub.startDate, sub.recurrence);
           const renewal = nextRenewalDate(sub.startDate, sub.recurrence);
           const iconColor = iconColorFromName(sub.name);

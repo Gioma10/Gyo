@@ -2,7 +2,6 @@
 
 import { useUser } from "@clerk/nextjs";
 import { Bell } from "lucide-react";
-import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 
 import { capitalize } from "@/utils/string-fromatting";
@@ -10,15 +9,7 @@ import { ActiveSub } from "@/components/dashboard/ActiveSub";
 import { useQuery } from "@tanstack/react-query";
 import { Subscription } from "@/lib/schemas/subscription";
 import { BalanceBanner } from "@/components/dashboard/BalanceBanner";
-
-const mockMonths = [
-  { label: "oct", height: 55 },
-  { label: "nov", height: 60 },
-  { label: "dec", height: 50 },
-  { label: "jan", height: 65 },
-  { label: "feb", height: 55 },
-  { label: "mar", height: 80, active: true },
-];
+import { SubChart } from "@/components/dashboard/SubChart";
 
 export default function DashboardPage() {
   const { user } = useUser();
@@ -56,47 +47,13 @@ export default function DashboardPage() {
       </div>
 
       {/* Balance card */}
-      <BalanceBanner />
+      <BalanceBanner subscriptions={subs} />
 
       {/* Subscriptions */}
       <ActiveSub subscriptions={subs} />
 
       {/* Chart */}
-      <h2 className="text-base font-medium text-foreground mb-3">
-        Monthly spending
-      </h2>
-      <Card className="border-border bg-surface">
-        <CardContent className="p-4">
-          <p className="text-xs text-muted-foreground mb-3">Last 6 months</p>
-          <div className="flex items-end gap-1.5 h-16 mb-1.5">
-            {mockMonths.map((m) => (
-              <div
-                key={m.label}
-                className="flex-1 flex flex-col items-center gap-1 h-full justify-end"
-              >
-                <div
-                  className="w-full rounded-t-sm transition-all"
-                  style={{
-                    height: `${m.height}%`,
-                    backgroundColor: m.active ? "#1D9E75" : "#2a2a2a",
-                  }}
-                />
-                <span className="text-xs" style={{ color: "#555" }}>
-                  {m.label}
-                </span>
-              </div>
-            ))}
-          </div>
-          <div className="flex justify-between items-center pt-3 border-t border-border">
-            <span className="text-sm text-muted-foreground">
-              Total subscriptions March
-            </span>
-            <span className="text-base font-medium text-foreground">
-              €103.97
-            </span>
-          </div>
-        </CardContent>
-      </Card>
+      <SubChart />
     </div>
   );
 }
