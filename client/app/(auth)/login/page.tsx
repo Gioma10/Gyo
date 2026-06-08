@@ -26,30 +26,23 @@ export default function LoginPage() {
   const { register, handleSubmit, formState: { errors } } = useForm<LoginForm>({
     resolver: zodResolver(loginSchema),
   });
-  const { signIn } = useSignIn();
+  const { isLoaded, signIn, setActive } = useSignIn();
   const [clerkError, setClerkError] = useState<string | null>(null);
   const router = useRouter();
 
   const onLogin = useMutation({
     mutationFn: async (data: LoginForm) => {
-      if (!signIn) throw new Error("Not ready");
+      if (!isLoaded || !signIn) throw new Error("Not ready");
 
-      const { error } = await signIn.password({
-        emailAddress: data.email,
+      const result = await signIn.create({
+        identifier: data.email,
         password: data.password,
       });
 
-      if (error) throw error;
-
-      if (signIn.status === "complete") {
-        await signIn.finalize({
-          navigate: ({ decorateUrl }) => {
-            const url = decorateUrl("/");
-            router.push(url);
-          },
-        });
+      if (result.status === "complete") {
+        await setActive({ session: result.createdSessionId });
       } else {
-        throw new Error(`Unexpected status: ${signIn.status}`);
+        throw new Error(`Unexpected status: ${result.status}`);
       }
     },
     onSuccess: (status) => {
