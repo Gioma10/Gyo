@@ -10,12 +10,16 @@ import {
   Tooltip,
   XAxis,
 } from "recharts";
+import type { BarShapeProps, TooltipContentProps } from "recharts";
 import { Card, CardContent } from "../ui/card";
 import { MonthlySpend } from "@/lib/schemas/monthly-spend";
 
-const ChartTooltip = ({ active, payload }: any) => {
+type ChartDatum = { month: string; total: number; label: string };
+
+const ChartTooltip = ({ active, payload }: TooltipContentProps) => {
   if (!active || !payload?.length) return null;
-  const p = payload[0].payload;
+  const p = payload[0]?.payload as ChartDatum | undefined;
+  if (!p) return null;
   return (
     <div className="rounded-lg border border-border bg-background px-3 py-2 shadow-lg">
       <p className="text-[11px] text-muted-foreground">
@@ -84,7 +88,7 @@ export const SubChart = () => {
 
                 <Tooltip
                   cursor={false}
-                  content={<ChartTooltip />}
+                  content={ChartTooltip}
                   animationDuration={150}
                 />
 
@@ -101,7 +105,7 @@ export const SubChart = () => {
                   onClick={(_, index) =>
                     setSelectedMonth(data[index]?.month ?? null)
                   }
-                  shape={(props: any) => (
+                  shape={(props: BarShapeProps) => (
                     <Rectangle
                       {...props}
                       radius={[6, 6, 0, 0]}
