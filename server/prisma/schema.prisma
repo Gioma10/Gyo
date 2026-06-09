@@ -38,7 +38,7 @@ model Subscription {
   endDate    DateTime?  // null = ancora attivo; valorizzato = disdetto (≠ cancellazione)
   recurrence Recurrence @default(MONTHLY)
   userId     String
-  user       User       @relation(fields: [userId], references: [id])
+  user       User       @relation(fields: [userId], references: [id], onDelete: Cascade)
   createdAt  DateTime   @default(now())
   updatedAt  DateTime   @updatedAt
 }
@@ -46,7 +46,7 @@ model Subscription {
 model MonthlySpend {
   id        String   @id @default(cuid())
   userId    String
-  user      User     @relation(fields: [userId], references: [id])
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   month     DateTime // sempre il 1° del mese, es. 2026-03-01T00:00:00Z
   total     Decimal  @db.Decimal(10, 2)
   createdAt DateTime @default(now())

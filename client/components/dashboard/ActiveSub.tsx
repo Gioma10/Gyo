@@ -1,5 +1,6 @@
 import type { Subscription } from "@/lib/schemas/subscription";
 import { daysUntilNextRenewal, nextRenewalDate } from "@/lib/subscriptions";
+import { Plus } from "lucide-react";
 import { Button } from "../ui/button";
 import { Card, CardContent } from "../ui/card";
 import Link from "next/link";
@@ -15,16 +16,34 @@ function iconColorFromName(name: string): string {
 export const ActiveSub = ({ subscriptions }: { subscriptions?: Subscription[] }) => {
   if (!subscriptions) return null;
 
-  const viewSubs = subscriptions.slice(0,3).map((item)=>item)
+  const viewSubs = subscriptions.slice(0, 3);
 
   return (
     <>
       <div className="flex justify-between items-center mb-3">
         <h2 className="text-base font-medium text-foreground">Active subscriptions</h2>
-        <Button variant="ghost" className="text-sm h-auto p-2" style={{ color: "#1D9E75" }}>
+        {subscriptions.length > 3 && (
+          <Button variant="ghost" className="text-sm h-auto p-2" style={{ color: "#1D9E75" }}>
             <Link href={"/subscriptions"}>See all</Link>
-        </Button>
+          </Button>
+        )}
       </div>
+
+      {subscriptions.length === 0 && (
+        <div className="flex justify-center mb-5">
+          <Button
+            asChild
+            size="sm"
+            className="gap-2 text-sm"
+            style={{ backgroundColor: "#1D9E75", color: "#fff" }}
+          >
+            <Link href={"/subscriptions"}>
+              <Plus size={14} />
+              Add new
+            </Link>
+          </Button>
+        </div>
+      )}
 
       <div className="flex flex-col gap-2 mb-5">
         {viewSubs.map((sub) => {

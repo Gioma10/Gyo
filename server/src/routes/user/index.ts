@@ -34,7 +34,10 @@ export const userRoutes = async (fastify: FastifyInstance) => {
         const { userId } = req.auth;
 
         await clerk.users.deleteUser(userId);
-        await prisma.user.delete({ where: { id: userId } });
+        // deleteMany è idempotente: non solleva se il webhook user.deleted
+        // ha già rimosso il record. Le subscriptions/monthlySpends vengono
+        // eliminate in cascata (onDelete: Cascade nello schema).
+        await prisma.user.deleteMany({ where: { id: userId } });
 
         return reply.send({ success: true });
     });

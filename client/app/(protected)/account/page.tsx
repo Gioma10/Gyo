@@ -6,6 +6,16 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { useClerk, useUser } from "@clerk/nextjs";
 import { useMutation } from "@tanstack/react-query";
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 
 const AccountPage = () => {
   const { signOut } = useClerk();
@@ -31,6 +41,14 @@ const AccountPage = () => {
       if (!res.ok) throw new Error(await res.text());
       await user!.reload();
     },
+  });
+
+  const { mutate: deleteAccount, isPending: isDeleting, error: deleteError } = useMutation({
+    mutationFn: async () => {
+      const res = await fetch("/api/user", { method: "DELETE" });
+      if (!res.ok) throw new Error(await res.text());
+    },
+    onSuccess: () => signOut({ redirectUrl: "/login" }),
   });
 
   const initials = user?.firstName && user?.lastName
@@ -125,6 +143,57 @@ const AccountPage = () => {
             >
               Sign out
             </Button>
+          </div>
+        </CardContent>
+      </Card>
+
+      <Card className="border-destructive/30">
+        <CardHeader className="border-b">
+          <CardTitle className="text-sm text-destructive">Danger zone</CardTitle>
+          <CardDescription>Permanently delete your account and all your data</CardDescription>
+        </CardHeader>
+        <CardContent className="pt-4">
+          <div className="flex items-center justify-between gap-4">
+            <div>
+              <p className="text-sm font-medium">Delete account</p>
+              <p className="text-xs text-muted-foreground mt-0.5">
+                This removes your account and every subscription. This action cannot be undone.
+              </p>
+            </div>
+            <Dialog>
+              <DialogTrigger asChild>
+                <Button variant="destructive" size="sm" className="shrink-0">
+                  Delete
+                </Button>
+              </DialogTrigger>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>Delete your account?</DialogTitle>
+                  <DialogDescription>
+                    This will permanently delete your account and all of your subscriptions.
+                    This action cannot be undone.
+                  </DialogDescription>
+                </DialogHeader>
+                {deleteError && (
+                  <p className="text-xs text-destructive">{(deleteError as Error).message}</p>
+                )}
+                <DialogFooter>
+                  <DialogClose asChild>
+                    <Button variant="outline" size="sm" disabled={isDeleting}>
+                      Cancel
+                    </Button>
+                  </DialogClose>
+                  <Button
+                    variant="destructive"
+                    size="sm"
+                    onClick={() => deleteAccount()}
+                    disabled={isDeleting}
+                  >
+                    {isDeleting ? "Deleting..." : "Delete account"}
+                  </Button>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
           </div>
         </CardContent>
       </Card>

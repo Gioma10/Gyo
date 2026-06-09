@@ -52,7 +52,9 @@ export const webhookRoutes = async (fastify: FastifyInstance) => {
     if (event.type === "user.deleted") {
       const { id } = event.data;
 
-      await prisma.user.delete({
+      // deleteMany è idempotente: non solleva se l'utente è già stato
+      // rimosso dalla rotta DELETE /api/user. Cascade su sub/monthlySpend.
+      await prisma.user.deleteMany({
         where: { id },
       });
     }
