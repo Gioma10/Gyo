@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -10,13 +10,16 @@ import { useMutation } from "@tanstack/react-query";
 const AccountPage = () => {
   const { signOut } = useClerk();
   const { user } = useUser();
-  const [username, setUsername] = useState(user?.username ?? "");
+  const serverUsername = user?.username ?? "";
+  const [username, setUsername] = useState(serverUsername);
 
-  useEffect(() => {
-    if (user?.username !== undefined) {
-      setUsername(user.username ?? "");
-    }
-  }, [user?.username]);
+  // Sync local state when the server value changes (e.g. after reload),
+  // adjusting state during render instead of in an effect.
+  const [prevServerUsername, setPrevServerUsername] = useState(serverUsername);
+  if (serverUsername !== prevServerUsername) {
+    setPrevServerUsername(serverUsername);
+    setUsername(serverUsername);
+  }
 
   const { mutate: updateUser, isPending, isSuccess, error } = useMutation({
     mutationFn: async (newUsername: string) => {

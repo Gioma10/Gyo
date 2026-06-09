@@ -22,35 +22,42 @@ const loginSchema = z.object({
 
 type LoginForm = z.infer<typeof loginSchema>;
 
+type ClerkErrorLike = {
+  errors?: { code?: string; message?: string }[];
+  message?: string;
+};
+
 export default function LoginPage() {
   const { register, handleSubmit, formState: { errors } } = useForm<LoginForm>({
     resolver: zodResolver(loginSchema),
   });
-  const { isLoaded, signIn, setActive } = useSignIn();
+  const { signIn } = useSignIn();
   const [clerkError, setClerkError] = useState<string | null>(null);
   const router = useRouter();
 
   const onLogin = useMutation({
     mutationFn: async (data: LoginForm) => {
-      if (!isLoaded || !signIn) throw new Error("Not ready");
+      if (!signIn) throw new Error("Not ready");
 
-      const result = await signIn.create({
+      const { error } = await signIn.password({
         identifier: data.email,
         password: data.password,
       });
 
-      if (result.status === "complete") {
-        await setActive({ session: result.createdSessionId });
+      if (error) throw error;
+
+      if (signIn.status === "complete") {
+        await signIn.finalize();
       } else {
-        throw new Error(`Unexpected status: ${result.status}`);
+        throw new Error(`Unexpected status: ${signIn.status}`);
       }
     },
-    onSuccess: (status) => {
-      console.log(status);
+    onSuccess: () => {
       router.push("/");
     },
-    onError: (error: any) => {
-      const code = error.errors?.[0]?.code;
+    onError: (error) => {
+      const err = error as ClerkErrorLike;
+      const code = err.errors?.[0]?.code;
       const message = match(code)
         .with("form_password_incorrect", () => "Incorrect password")
         .with("form_identifier_not_found", () => "No account found with this email")
@@ -60,9 +67,9 @@ export default function LoginPage() {
         .with("form_identifier_exists", () => "Account already exists")
         .otherwise(
           () =>
-            error.errors?.[0]?.message ??
-            error.message ??
-            `Something went wrong${error.errors?.[0]?.code ? ` [${error.errors[0].code}]` : ""}`
+            err.errors?.[0]?.message ??
+            err.message ??
+            `Something went wrong${err.errors?.[0]?.code ? ` [${err.errors[0].code}]` : ""}`
         );
       console.error("Clerk sign-in error:", error);
       setClerkError(message);
@@ -118,7 +125,7 @@ export default function LoginPage() {
         </form>
 
         <p className="text-sm text-center text-muted-foreground mt-4">
-          Don't have an account?{" "}
+          Don&apos;t have an account?{" "}
           <Link href="/register" className="text-primary hover:underline">
             Sign up
           </Link>

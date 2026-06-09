@@ -30,6 +30,11 @@ const registerSchema = z
 
 type RegisterForm = z.infer<typeof registerSchema>;
 
+type ClerkErrorLike = {
+  errors?: { code?: string; message?: string }[];
+  message?: string;
+};
+
 export default function RegisterPage() {
   const {
     register,
@@ -67,14 +72,19 @@ export default function RegisterPage() {
       });
 
       if (error) throw error;
-      return signUp.status;
+
+      if (signUp.status === "complete") {
+        await signUp.finalize();
+      } else {
+        throw new Error(`Unexpected status: ${signUp.status}`);
+      }
     },
-    onSuccess: (status) => {
-      console.log(status);
+    onSuccess: () => {
       router.push("/");
     },
-    onError: (error: any) => {
-      const code = error.errors?.[0]?.code;
+    onError: (error) => {
+      const err = error as ClerkErrorLike;
+      const code = err.errors?.[0]?.code;
       const message = match(code)
         .with(
           "form_password_pwned",
@@ -104,7 +114,7 @@ export default function RegisterPage() {
         .with("form_param_nil", () => "Fill in all fields")
         .with("form_param_format_invalid", () => "Invalid format")
         .otherwise(
-          () => error.errors?.[0]?.message ?? "Something went wrong",
+          () => err.errors?.[0]?.message ?? "Something went wrong",
         );
 
       setError(message);
