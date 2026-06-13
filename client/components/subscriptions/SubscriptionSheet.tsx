@@ -144,7 +144,7 @@ function SubscriptionForm({
   return (
     <form
       onSubmit={handleSubmit((data) => mutation.mutate(data))}
-      className="space-y-4 p-4"
+      className="space-y-4 p-4 pb-[calc(1.5rem+env(safe-area-inset-bottom))] overflow-y-auto"
     >
       <Field>
         <FieldLabel className="text-muted-foreground text-xs">Name</FieldLabel>
