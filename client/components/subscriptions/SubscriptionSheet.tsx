@@ -89,7 +89,7 @@ function DateField({
       type="date"
       value={value}
       onChange={(e) => onChange(e.target.value)}
-      className="bg-muted border-border text-foreground focus-visible:ring-primary"
+      className="h-10 w-full min-w-0 max-w-full box-border appearance-none rounded-md bg-muted border border-border px-3 py-2 text-sm text-foreground focus-visible:ring-primary [&::-webkit-date-and-time-value]:text-left [&::-webkit-calendar-picker-indicator]:opacity-60 dark:[&::-webkit-calendar-picker-indicator]:invert"
     />
   );
 }
@@ -122,6 +122,7 @@ function SubscriptionForm({
   });
 
   const recurrence = watch("recurrence");
+  const amountReg = register("amount");
 
   const mutation = useMutation({
     mutationFn: async (data: SubscriptionFormValues) => {
@@ -158,10 +159,16 @@ function SubscriptionForm({
       <Field>
         <FieldLabel className="text-muted-foreground text-xs">Amount (€)</FieldLabel>
         <Input
-          {...register("amount")}
+          {...amountReg}
           type="text"
           inputMode="decimal"
           placeholder="0.00"
+          onChange={(e) => {
+            // I tastierini mobile in locale IT mostrano la virgola: normalizziamo
+            // a punto così parseFloat() funziona ovunque (totalMonthly, dueThisMonth).
+            e.target.value = e.target.value.replace(",", ".");
+            amountReg.onChange(e);
+          }}
           className="[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none bg-muted border-border text-foreground placeholder:text-muted-foreground focus-visible:ring-primary"
         />
         {errors.amount && <FieldError>{errors.amount.message}</FieldError>}
